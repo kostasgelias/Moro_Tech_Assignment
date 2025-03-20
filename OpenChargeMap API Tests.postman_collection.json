@@ -1,0 +1,212 @@
+{
+	"info": {
+		"_postman_id": "f00fc0b1-cb0b-49b7-b73e-bae8a13c742b",
+		"name": "OpenChargeMap API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16725360",
+		"_collection_link": "https://moro-tech-assign.postman.co/workspace/MoroTech_Second_Assignment~d2fecf63-d9c2-43ad-8646-fd0e6121868e/collection/16725360-f00fc0b1-cb0b-49b7-b73e-bae8a13c742b?action=share&source=collection_link&creator=16725360"
+	},
+	"item": [
+		{
+			"name": "Get POIs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 200\",function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is under 1000ms\", function() {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contain an array of POI objects\", function() {\r",
+							"    pm.expect(pm.response.json()).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Each POI object has required fields\", function() {\r",
+							"    let jsonData = pm.response.json();\r",
+							"    jsonData.forEach(poi => {\r",
+							"        pm.expect(poi).to.have.property(\"ID\");\r",
+							"        pm.expect(poi).to.have.property(\"AddressInfo\");\r",
+							"        pm.expect(poi.AddressInfo).to.have.property(\"Latitude\");\r",
+							"        pm.expect(poi.AddressInfo).to.have.property(\"Longitude\");\r",
+							"        pm.expect(poi).to.have.property(\"NumberOfPoints\");\r",
+							"\r",
+							"    })\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Max results are expected\", function(){\r",
+							"    let maxResults = pm.request.url.query.get('maxresults');\r",
+							"    let jsonResponse = pm.response.json();\r",
+							"    pm.expect(jsonResponse.length).to.equal(parseInt(maxResults));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"All POIs are withing 10km\", function() {\r",
+							"    let maxDistance = 10;\r",
+							"    let lat = 51.5074\r",
+							"    let lon = 0.1278;\r",
+							"    let jsonData = pm.response.json();\r",
+							"\r",
+							"    jsonData.forEach(poi => {\r",
+							"        let poiLat = poi.AddressInfo.Latitude;\r",
+							"        let poiLon = poi.AddressInfo.Longitude;\r",
+							"        let distance = Math.sqrt(Math.pow(poiLat - lat,2) + Math.pow(poiLon - lon,2)) * 111; //Convert degrees to KM.\r",
+							"        pm.expect(distance).to.be.below(maxDistance)\r",
+							"    })\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.openchargemap.io/v3/poi/?latitude=51.5074&longitude=0.1278&distance=10&maxresults=5&key={{API_KEY}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"openchargemap",
+						"io"
+					],
+					"path": [
+						"v3",
+						"poi",
+						""
+					],
+					"query": [
+						{
+							"key": "latitude",
+							"value": "51.5074"
+						},
+						{
+							"key": "longitude",
+							"value": "0.1278"
+						},
+						{
+							"key": "distance",
+							"value": "10"
+						},
+						{
+							"key": "maxresults",
+							"value": "5"
+						},
+						{
+							"key": "key",
+							"value": "{{API_KEY}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Reference Data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response time is under 1000ms\", function () {\r",
+							"     pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains arrays for all reference data types\", function () {\r",
+							"    jsonData = pm.response.json();\r",
+							"\r",
+							"    let expectedKeys = [\"ChargerTypes\",\"ConnectionTypes\",\"CurrentTypes\",\"Countries\",\"DataProviders\",\"Operators\",\"StatusTypes\",\"SubmissionStatusTypes\",\"UsageTypes\",\"UserCommentTypes\",\"CheckinStatusTypes\",\"DataTypes\",\"MetadataGroups\"];\r",
+							"\r",
+							"    expectedKeys.forEach(key => {\r",
+							"        pm.expect(jsonData).to.have.property(key);\r",
+							"        pm.expect(jsonData[key]).to.be.an('array');\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Each array has an ID and and a Title\", function () {\r",
+							"     jsonData = pm.response.json();\r",
+							"\r",
+							"     // Checking that each array has an ID and a Title\r",
+							"     ['ChargerTypes', 'ConnectionTypes', 'CurrentTypes', 'Countries', 'DataProviders', 'Operators', 'StatusTypes', 'SubmissionStatusTypes', 'UsageTypes', 'UserCommentTypes', 'CheckinStatusTypes', 'DataTypes', 'MetadataGroups'].forEach((arrayName) => {\r",
+							"            jsonData[arrayName].forEach((item) => {\r",
+							"                pm.expect(item).to.have.property('ID');\r",
+							"                pm.expect(item).to.have.property('Title');\r",
+							"            });\r",
+							"     });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"ChargetTypes array contains entries for Fast and Slow chargers\", function () {\r",
+							"    jsonData = pm.response.json();\r",
+							"     \r",
+							"    \r",
+							"    jsonData.ChargerTypes.forEach((chargerType) => {\r",
+							"            pm.expect(chargerType).to.have.property('IsFastChargeCapable');\r",
+							"            pm.expect(chargerType.IsFastChargeCapable).to.be.a('boolean');\r",
+							"     });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"All StatusTypes have a unique ID\", function () {\r",
+							"    jsonData = pm.response.json();\r",
+							"    jsonData.StatusTypes.forEach((statusType, index, array) => {\r",
+							"            pm.expect(statusType).to.have.property('ID');\r",
+							"            pm.expect(array.findIndex(item => item.ID === statusType.ID)).to.equal(index);\r",
+							"     });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.openchargemap.io/v3/referencedata/?key={{API_KEY}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"openchargemap",
+						"io"
+					],
+					"path": [
+						"v3",
+						"referencedata",
+						""
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{API_KEY}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
