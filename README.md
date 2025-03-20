@@ -59,7 +59,7 @@ The tests cover **response time**, **status codes**, **response data schema vali
 ## 📊 Test Results & Observations
 
 ### **📌 Summary**
-- ✅ **All API requests responded within the expected time limits (<1000ms).** 
+- ✅ **All API requests responded within the expected time limits (<1000ms).** **The first request fails with ~200ms delay, after that every test passes, maybe because of caching.** 
 - ✅ **Status codes were as expected (200 OK).**
 - ✅ **Schema validation passed for all responses.**
 - ⚠️ **Some POIs were found slightly beyond the 10km range** (suggests minor inaccuracies in the dataset).
