@@ -58,6 +58,8 @@ The tests cover **response time**, **status codes**, **response data schema vali
 
 ## 📊 Test Results & Observations
 
+![1stTest](https://github.com/user-attachments/assets/1c926272-b7f1-481c-9a3c-716f9982ac50)
+
 ### **📌 Summary**
 - ✅ **All API requests responded within the expected time limits (<1000ms).** 
 - ✅ **Status codes were as expected (200 OK).**
