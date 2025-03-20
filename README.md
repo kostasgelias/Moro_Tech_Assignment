@@ -19,7 +19,9 @@ The tests cover **response time**, **status codes**, **response data schema vali
 #### 🏗️ **Using Postman**
 1. Open **Postman**.
 2. Click on **Import** in the top-left corner.
-3. Upload the provided Postman collection file (`OpenChargeMapTests.postman_collection.json`).
+3. Upload the provided Postman collection file (`OpenChargeMap API Tests.postman_collection.json`).
+4. Click on **Import** again.
+5. Upload the provided Postman collection file (`OpenChargeMap.postman_environment.json`).
 
 ---
 
